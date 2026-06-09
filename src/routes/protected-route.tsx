@@ -5,7 +5,8 @@ import { canAccessRoute } from "../utilities/rbac";
 import type { ReactElement } from "react";
 
 export function ProtectedRoute({ allowed, children }: { allowed: Role[]; children: ReactElement }) {
-  const { user } = useAuth();
+  const { booting, user } = useAuth();
+  if (booting) return <main className="state-page"><div className="loading-state">Checking secure session...</div></main>;
   if (!user) return <Navigate to="/signin" replace />;
   if (!canAccessRoute(user.role, allowed)) return <Navigate to="/" replace />;
   return children;

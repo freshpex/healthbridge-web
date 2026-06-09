@@ -1,18 +1,54 @@
-import { demoPassword, demoUsers } from "../../../constants/mock-data";
-import type { User } from "../../../types/domain";
+import type { Role, User } from "../../../types/domain";
 import { apiClient } from "../../../services/api";
 
+export interface AuthSession {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface SignupPayload {
+  name: string;
+  email: string;
+  password: string;
+  role: "patient" | "hospital_admin";
+  hospitalIds?: string[];
+  hospital?: {
+    name: string;
+    address: string;
+    city: string;
+    state: string;
+    contactEmail: string;
+    specialties: string[];
+  };
+}
+
 export const authService = {
-  async login(email: string, password: string): Promise<{ user: User; accessToken?: string }> {
-    try {
-      return await apiClient.request<{ user: User; accessToken: string }>("/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password })
-      });
-    } catch {
-      const user = demoUsers.find((candidate) => candidate.email === email);
-      if (!user || password !== demoPassword) throw new Error("Invalid demo credentials");
-      return { user };
-    }
-  }
+  login: (email: string, password: string) =>
+    apiClient.request<AuthSession>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password })
+    }),
+
+  signup: (payload: SignupPayload) =>
+    apiClient.request<AuthSession>("/auth/signup", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    }),
+
+  refresh: (refreshToken: string) =>
+    apiClient.request<AuthSession>("/auth/refresh", {
+      method: "POST",
+      body: JSON.stringify({ refreshToken })
+    }),
+
+  me: (token: string) => apiClient.request<User>("/auth/me", {}, token),
+
+  landingForRole: (role: Role) => ({
+    patient: "/patient",
+    doctor: "/doctor",
+    hospital_admin: "/hospital",
+    super_admin: "/admin",
+    emergency_staff: "/emergency"
+  })[role]
 };

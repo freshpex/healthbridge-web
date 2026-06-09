@@ -1,11 +1,13 @@
 import { createContext } from "react";
 import type { User } from "../../../types/domain";
+import type { SignupPayload } from "../services/auth-service";
 
 export interface AuthContextValue {
   user?: User;
   token?: string;
-  login: (email: string, password: string) => Promise<void>;
-  selectPersona: (user: User) => void;
+  booting: boolean;
+  login: (email: string, password: string) => Promise<User>;
+  signup: (payload: SignupPayload) => Promise<User>;
   logout: () => void;
 }
 

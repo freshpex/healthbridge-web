@@ -11,10 +11,12 @@ export class ApiError extends Error {
 
 export const apiClient = {
   async request<T>(path: string, options: RequestInit = {}, token?: string): Promise<T> {
+    const hasBody = options.body !== undefined;
+    const isFormData = hasBody && typeof FormData !== "undefined" && options.body instanceof FormData;
     const response = await fetch(`${API_URL}${path}`, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
+        ...(!isFormData && hasBody ? { "Content-Type": "application/json" } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers
       }
@@ -24,3 +26,5 @@ export const apiClient = {
     return payload.data as T;
   }
 };
+
+export { API_URL };
