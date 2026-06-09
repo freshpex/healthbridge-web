@@ -33,7 +33,26 @@ export function AdminDashboard() {
   };
 
   useEffect(() => {
-    void load();
+    let alive = true;
+    if (!token) return;
+    Promise.all([
+      healthbridgeService.getHospitals(token),
+      healthbridgeService.getUsers(token)
+    ])
+      .then(([nextHospitals, nextUsers]) => {
+        if (!alive) return;
+        setHospitals(nextHospitals);
+        setUsers(nextUsers);
+      })
+      .catch((caught) => {
+        if (alive) setError(caught instanceof Error ? caught.message : "Could not load admin console");
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
   }, [token]);
 
   const approve = async (hospitalId: string) => {

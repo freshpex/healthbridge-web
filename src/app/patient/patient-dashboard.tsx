@@ -38,7 +38,26 @@ export function PatientDashboard() {
   };
 
   useEffect(() => {
-    void load();
+    let alive = true;
+    if (!token) return;
+    Promise.all([
+      healthbridgeService.getPatientDashboard(token),
+      healthbridgeService.listHospitals()
+    ])
+      .then(([nextDashboard, nextHospitals]) => {
+        if (!alive) return;
+        setDashboard(nextDashboard);
+        setHospitals(nextHospitals);
+      })
+      .catch((caught) => {
+        if (alive) setError(caught instanceof Error ? caught.message : "Could not load patient dashboard");
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
   }, [token]);
 
   const revoke = async (shareId: string) => {
