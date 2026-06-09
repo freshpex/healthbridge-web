@@ -42,6 +42,21 @@ export function HospitalDashboard() {
     };
   }, [token, user?.hospitalId]);
 
+  useEffect(() => {
+    let alive = true;
+    if (!token || !selectedPatientId) return;
+    healthbridgeService.getRecords(token, selectedPatientId)
+      .then((nextRecords) => {
+        if (alive) setRecords(nextRecords);
+      })
+      .catch((caught) => {
+        if (alive) setError(caught instanceof Error ? caught.message : "Could not load selected patient records");
+      });
+    return () => {
+      alive = false;
+    };
+  }, [selectedPatientId, token]);
+
   const create = async () => {
     if (!token || !selectedPatientId) return;
     setError("");
