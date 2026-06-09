@@ -99,6 +99,9 @@ export const healthbridgeService = {
 
   getDoctors: async (token: string) => apiClient.request<unknown[]>("/doctors", {}, token),
 
+  approveHospital: async (token: string, hospitalId: string) =>
+    apiClient.request<RawHospital>(`/hospitals/${hospitalId}/approve`, { method: "PATCH" }, token).then(normalizeHospital),
+
   getRecords: async (token: string, patientId?: string) =>
     apiClient.request<RawRecord[]>(`/medical-records${patientId ? `?patientId=${patientId}` : ""}`, {}, token).then((records) => records.map(normalizeRecord)),
 
@@ -110,6 +113,12 @@ export const healthbridgeService = {
 
   getAppointments: async (token: string, patientId?: string) =>
     apiClient.request<Appointment[]>(`/appointments${patientId ? `?patientId=${patientId}` : ""}`, {}, token),
+
+  createRecord: async (token: string, payload: { patientId: string; hospitalId?: string; type: string; title: string; summary: string; critical?: boolean }) =>
+    apiClient.request<RawRecord>("/medical-records", { method: "POST", body: JSON.stringify(payload) }, token).then(normalizeRecord),
+
+  createPrescription: async (token: string, payload: { patientId: string; hospitalId?: string; medication: string; dosage: string; frequency: string; active?: boolean }) =>
+    apiClient.request<Prescription>("/prescriptions", { method: "POST", body: JSON.stringify(payload) }, token),
 
   getShares: async (token: string) => apiClient.request<RawShare[]>("/consent-sharing", {}, token).then((shares) => shares.map(normalizeShare)),
 
