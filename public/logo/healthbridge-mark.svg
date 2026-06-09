@@ -1,0 +1,11 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="HealthBridge logo">
+  <rect width="128" height="128" rx="28" fill="url(#paint0_linear)"/>
+  <path d="M36 67H52L58 48L71 84L78 67H92" stroke="white" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M64 25C45 25 30 39 30 57C30 86 64 101 64 101C64 101 98 86 98 57C98 39 83 25 64 25Z" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".86"/>
+  <defs>
+    <linearGradient id="paint0_linear" x1="18" y1="13" x2="109" y2="118" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E63FF"/>
+      <stop offset="1" stop-color="#00A7A7"/>
+    </linearGradient>
+  </defs>
+</svg>
