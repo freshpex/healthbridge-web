@@ -130,6 +130,20 @@ export const healthbridgeService = {
   revokeShare: async (token: string, shareId: string) =>
     apiClient.request<RawShare>(`/consent-sharing/${shareId}/revoke`, { method: "PATCH" }, token).then(normalizeShare),
 
+  updateProfile: async (token: string, payload: Partial<Pick<PatientProfile, "bloodGroup" | "allergies" | "chronicConditions" | "currentMedications" | "emergencyContact">>) =>
+    apiClient.request<RawPatient>("/patients/me", { method: "PATCH", body: JSON.stringify(payload) }, token).then(normalizePatient),
+
+  requestSync: async (token: string, payload: { hospitalId: string; notes?: string }) =>
+    apiClient.request<{ _id: string; status: string }>("/patients/me/sync-requests", { method: "POST", body: JSON.stringify(payload) }, token),
+
+  uploadDocument: async (token: string, payload: { file: File; patientId?: string; category?: string }) => {
+    const form = new FormData();
+    form.append("file", payload.file);
+    if (payload.patientId) form.append("patientId", payload.patientId);
+    if (payload.category) form.append("category", payload.category);
+    return apiClient.request<Upload>("/uploads", { method: "POST", body: form }, token);
+  },
+
   enableEmergency: async (token: string) => apiClient.request<{ code: string }>("/emergency-access/enable", { method: "POST" }, token),
 
   resolveEmergency: async (token: string, code: string, reason: string) =>
