@@ -83,7 +83,7 @@ button, input, textarea { font: inherit; }
     radial-gradient(circle at 12% 12%, rgba(0, 167, 167, 0.11), transparent 28%),
     linear-gradient(180deg, #f7fbff 0%, #eef8fb 100%);
 }
-.hero-copy { animation: rise-in 520ms ease both; }
+.hero-copy { color: var(--ink); }
 .hero-copy h1 { max-width: 720px; margin: 0; font-size: clamp(3rem, 6vw, 6.8rem); line-height: 0.94; letter-spacing: 0; }
 .hero-copy p { max-width: 620px; color: var(--muted); font-size: 1.2rem; line-height: 1.7; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
@@ -92,11 +92,11 @@ button, input, textarea { font: inherit; }
   position: absolute;
   inset: 0 0 70px 80px;
   border-radius: 18px;
-  background-image: linear-gradient(180deg, rgba(16, 32, 51, 0.05), rgba(16, 32, 51, 0.15)), url("https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1500&q=85");
+  background-image: linear-gradient(180deg, rgba(16, 32, 51, 0.03), rgba(16, 32, 51, 0.12)), url("/images/clinical-records.jpg");
   background-size: cover;
   background-position: center;
   box-shadow: var(--shadow);
-  animation: rise-in 640ms ease 80ms both;
+  animation: none;
 }
 .preview-panel {
   position: absolute;
@@ -253,7 +253,7 @@ button:disabled { cursor: not-allowed; opacity: 0.65; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition: none !important; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 
 @keyframes rise-in {

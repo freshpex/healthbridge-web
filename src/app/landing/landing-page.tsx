@@ -56,7 +56,7 @@ export function LandingPage() {
           </div>
         </section>
         <section className="image-story">
-          <img src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=85" alt="Clinician reviewing secure patient records on a hospital workstation" />
+          <img src="/images/doctor-workstation.jpg" alt="Clinician reviewing secure patient records on a hospital workstation" />
           <div>
             <h2>Built for serious hospital demos</h2>
             <p>Seeded hospitals, doctors, patients, consent grants, emergency codes, audit logs, and clinical records let stakeholders walk through a full production-style presentation without manual setup.</p>
@@ -72,7 +72,7 @@ export function LandingPage() {
             <h2>Security and privacy are product surfaces</h2>
             <p>JWT auth, refresh tokens, RBAC, consent sharing, rate limiting, Helmet headers, emergency minimization, and patient-visible audit logs are part of the working MVP.</p>
           </div>
-          <img src="https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=1200&q=85" alt="Modern hospital clinical team using secure digital systems" />
+          <img src="/images/hospital-team.jpg" alt="Modern hospital clinical team using secure digital systems" />
         </section>
         <section className="cta-band">
           <h2>Ready for a full production test presentation</h2>
