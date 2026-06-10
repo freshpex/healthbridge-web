@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { Activity, Ambulance, Building2, CalendarDays, ClipboardList, FlaskConical, History, Pill, ShieldCheck, Share2, UserRound } from "lucide-react";
 import type { Role } from "../../types/domain";
 
-const links: Record<Role, Array<{ to: string; label: string; icon: typeof Activity }>> = {
+export const roleNavigation: Record<Role, Array<{ to: string; label: string; icon: typeof Activity }>> = {
   patient: [
     { to: "/patient", label: "Dashboard", icon: Activity },
     { to: "/patient/profile", label: "Profile", icon: UserRound },
@@ -23,7 +23,7 @@ const links: Record<Role, Array<{ to: string; label: string; icon: typeof Activi
 export function SideNav({ role }: { role: Role }) {
   return (
     <aside className="side-nav">
-      {links[role].map((item) => {
+      {roleNavigation[role].map((item) => {
         const Icon = item.icon;
         return (
           <NavLink key={item.label} to={item.to}>

@@ -8,8 +8,8 @@ import { Logo } from "../../../components/static/logo";
 export function SignInPage() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("patient@healthbridge.test");
-  const [password, setPassword] = useState("Password123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +34,7 @@ export function SignInPage() {
       <section className="auth-panel">
         <Logo />
         <h1>Sign in to HealthBridge</h1>
-        <p>Use seeded credentials after running the backend seed script. Every dashboard reads from the API.</p>
+        <p>Access your patient, hospital, doctor, emergency, or admin workspace with your HealthBridge account.</p>
         <form onSubmit={submit} className="form-stack">
           <label>Email<input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></label>
           <label>Password<input type="password" required value={password} onChange={(event) => setPassword(event.target.value)} /></label>
@@ -45,8 +45,6 @@ export function SignInPage() {
           </button>
         </form>
         <div className="seeded-list">
-          <strong>Seeded demo users</strong>
-          <span>patient@healthbridge.test, doctor@mercy.test, admin@mercy.test, superadmin@healthbridge.test, emt@healthbridge.test</span>
           <Link to="/signup">Create a new patient account</Link>
         </div>
       </section>

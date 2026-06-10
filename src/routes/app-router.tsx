@@ -6,6 +6,7 @@ import { DoctorDashboard } from "../app/doctor/doctor-dashboard";
 import { EmergencyPage } from "../app/emergency/emergency-page";
 import { HospitalDashboard } from "../app/hospital/hospital-dashboard";
 import { LandingPage } from "../app/landing/landing-page";
+import { PublicPage } from "../app/landing/public-page";
 import { PatientAppointmentsPage } from "../app/patient/patient-appointments-page";
 import { PatientAuditPage } from "../app/patient/patient-audit-page";
 import { PatientDashboard } from "../app/patient/patient-dashboard";
@@ -23,6 +24,13 @@ export function AppRouter() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/product" element={<PublicPage page="product" />} />
+          <Route path="/hospitals" element={<PublicPage page="hospitals" />} />
+          <Route path="/security" element={<PublicPage page="security" />} />
+          <Route path="/pricing" element={<PublicPage page="pricing" />} />
+          <Route path="/privacy" element={<PublicPage page="privacy" />} />
+          <Route path="/terms" element={<PublicPage page="terms" />} />
+          <Route path="/disclaimer" element={<PublicPage page="disclaimer" />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/patient" element={<ProtectedRoute allowed={["patient"]}><PatientDashboard /></ProtectedRoute>} />

@@ -9,8 +9,8 @@ type EmergencyResult = Awaited<ReturnType<typeof healthbridgeService.resolveEmer
 
 export function EmergencyPage() {
   const { token } = useAuth();
-  const [code, setCode] = useState("HB-DEMO01");
-  const [reason, setReason] = useState("Emergency intake requires critical medication and allergy information.");
+  const [code, setCode] = useState("");
+  const [reason, setReason] = useState("");
   const [result, setResult] = useState<EmergencyResult>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
