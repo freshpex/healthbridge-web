@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { canAccessRoute, landingForRole } from "./rbac";
 
 describe("web RBAC helpers", () => {
-  it("routes seeded roles to the right dashboard", () => {
+  it("routes authenticated roles to the right dashboard", () => {
     expect(landingForRole.patient).toBe("/patient");
     expect(landingForRole.emergency_staff).toBe("/emergency");
   });

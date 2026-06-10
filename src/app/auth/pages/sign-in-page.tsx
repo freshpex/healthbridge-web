@@ -44,7 +44,7 @@ export function SignInPage() {
             {loading ? "Signing in..." : "Sign in securely"}
           </button>
         </form>
-        <div className="seeded-list">
+        <div className="account-help">
           <Link to="/signup">Create a new patient account</Link>
         </div>
       </section>

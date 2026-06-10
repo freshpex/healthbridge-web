@@ -14,7 +14,7 @@ export function SignUpPage() {
   const [selected, setSelected] = useState<string[]>([]);
   const [name, setName] = useState("New Patient");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("Password123!");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
