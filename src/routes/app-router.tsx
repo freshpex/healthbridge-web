@@ -15,6 +15,8 @@ import { PatientPrescriptionsPage } from "../app/patient/patient-prescriptions-p
 import { PatientProfilePage } from "../app/patient/patient-profile-page";
 import { PatientRecordsPage } from "../app/patient/patient-records-page";
 import { PatientSharingPage } from "../app/patient/patient-sharing-page";
+import { SymptomCheckerPage } from "../app/patient/symptom-checker-page";
+import { HospitalFinderPage } from "../app/patient/hospital-finder-page";
 import { AuthProvider } from "../app/auth/hooks/auth-provider";
 import { ProtectedRoute } from "./protected-route";
 
@@ -41,6 +43,8 @@ export function AppRouter() {
           <Route path="/patient/sharing" element={<ProtectedRoute allowed={["patient"]}><PatientSharingPage /></ProtectedRoute>} />
           <Route path="/patient/audit" element={<ProtectedRoute allowed={["patient"]}><PatientAuditPage /></ProtectedRoute>} />
           <Route path="/patient/profile" element={<ProtectedRoute allowed={["patient"]}><PatientProfilePage /></ProtectedRoute>} />
+          <Route path="/patient/symptom-checker" element={<ProtectedRoute allowed={["patient"]}><SymptomCheckerPage /></ProtectedRoute>} />
+          <Route path="/patient/hospital-finder" element={<ProtectedRoute allowed={["patient"]}><HospitalFinderPage /></ProtectedRoute>} />
           <Route path="/doctor" element={<ProtectedRoute allowed={["doctor"]}><DoctorDashboard /></ProtectedRoute>} />
           <Route path="/hospital" element={<ProtectedRoute allowed={["hospital_admin"]}><HospitalDashboard /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute allowed={["super_admin"]}><AdminDashboard /></ProtectedRoute>} />
