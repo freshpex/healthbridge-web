@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, ClipboardCheck, FileLock2, Hospital, LockKeyhole, QrCode, ShieldCheck, Stethoscope, UserCheck } from "lucide-react";
+import { ArrowRight, ClipboardCheck, Hospital, LockKeyhole, QrCode, ShieldCheck, Stethoscope, UserCheck } from "lucide-react";
 import { TopNav } from "../../components/header/top-nav";
 import { MetricCard } from "../../components/cards/metric-card";
 
@@ -8,30 +8,38 @@ export function LandingPage() {
     <>
       <TopNav />
       <main className="landing">
-        <section className="hero-section">
+        <section className="hero-section concept-hero">
           <div className="hero-copy">
             <h1>Medical records, securely connected</h1>
-            <p>HealthBridge gives patients control over cross-hospital records, consent sharing, emergency access, and audit visibility from one trusted platform.</p>
+            <p>HealthBridge connects you and your healthcare providers to share and access medical records securely.</p>
             <div className="hero-actions">
-              <Link className="primary-button" to="/signup">Create patient account <ArrowRight size={18} /></Link>
-              <Link className="secondary-button" to="/signin">Open secure portal</Link>
+              <Link className="primary-button" to="/signup">Get started <ArrowRight size={18} /></Link>
+              <Link className="secondary-button" to="/signin">Learn more</Link>
             </div>
           </div>
-          <div className="hero-product" aria-label="HealthBridge dashboard preview">
+          <div className="hero-product concept-product" aria-label="HealthBridge dashboard preview">
             <div className="photo-panel" />
-            <div className="preview-panel">
-              <div className="preview-heading">Live care bridge</div>
-              <div className="preview-row"><span>Mercy General</span><strong>Synced</strong></div>
-              <div className="preview-row"><span>Consent sharing</span><strong>3 scopes</strong></div>
-              <div className="preview-row critical"><span>Emergency code</span><strong>HB-DEMO01</strong></div>
+            <div className="phone-preview" aria-hidden="true">
+              <div className="phone-top">9:41</div>
+              <div className="phone-brand">HealthBridge</div>
+              <p>Welcome back,<strong> Sarah</strong></p>
+              <div className="phone-emergency">
+                <span>Emergency access</span>
+                <strong>HB7X-9K2L-P4Q8</strong>
+              </div>
+              <div className="phone-list">
+                <span>Cityview Medical Center <b>Connected</b></span>
+                <span>Lakeside Community Hospital <b>Connected</b></span>
+                <span>Metro Specialty Clinic <b>Connected</b></span>
+              </div>
             </div>
           </div>
         </section>
-        <section className="feature-band">
-          <MetricCard label="Connected hospitals" value="2 approved" tone="blue" icon={<Hospital />} />
-          <MetricCard label="Consent shares" value="1 active" tone="teal" icon={<ShieldCheck />} />
-          <MetricCard label="Critical records" value="2 ready" tone="green" icon={<FileLock2 />} />
-          <MetricCard label="Emergency access" value="Logged" tone="amber" icon={<QrCode />} />
+        <section className="feature-band concept-feature-band">
+          <MetricCard label="Secure" value="End-to-end encryption and privacy by design" tone="teal" icon={<ShieldCheck />} />
+          <MetricCard label="Connected" value="Seamless sharing across trusted hospitals" tone="teal" icon={<Hospital />} />
+          <MetricCard label="In control" value="You decide who can access your records" tone="blue" icon={<UserCheck />} />
+          <MetricCard label="Emergency-ready" value="Critical access with full audit visibility" tone="amber" icon={<QrCode />} />
         </section>
         <section className="workflow-band">
           <div>

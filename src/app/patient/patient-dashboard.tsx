@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Ambulance, Building2, CalendarDays, FileText, FlaskConical, History, Pill, Share2, UploadCloud } from "lucide-react";
+import { Building2, CalendarDays, FileText, FlaskConical, History, Pill, Share2, UploadCloud } from "lucide-react";
 import { AppShell } from "../../components/layout/app-shell";
-import { MetricCard } from "../../components/cards/metric-card";
 import { DataTable } from "../../components/tables/data-table";
 import { healthbridgeService } from "../../services/healthbridge-service";
 import type { Hospital, PatientDashboardPayload } from "../../types/domain";
@@ -10,6 +9,14 @@ import { useAuth } from "../auth/hooks/use-auth";
 const formatDate = (value?: string) => value ? new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(value)) : "Not set";
 const formatContact = (contact: PatientDashboardPayload["profile"]["emergencyContact"]) =>
   typeof contact === "string" ? contact : [contact?.name, contact?.relationship, contact?.phone].filter(Boolean).join(", ");
+const initials = (name: string) => name.split(" ").map((part) => part[0]).slice(0, 2).join("").toUpperCase();
+const ageFromDate = (value?: string) => {
+  if (!value) return "Patient";
+  const birth = new Date(value);
+  const now = new Date();
+  const age = now.getFullYear() - birth.getFullYear() - (now < new Date(now.getFullYear(), birth.getMonth(), birth.getDate()) ? 1 : 0);
+  return `${age} years`;
+};
 
 export function PatientDashboard() {
   const { token } = useAuth();
@@ -88,49 +95,96 @@ export function PatientDashboard() {
   if (!dashboard) return <AppShell title="Patient dashboard" subtitle="Secure patient data"><div className="empty-state">No patient profile was found for this account.</div></AppShell>;
 
   const connected = dashboard.profile.hospitalIds ?? hospitals.filter((hospital) => dashboard.profile.connectedHospitalIds.includes(hospital.id));
+  const activeShares = dashboard.shares.filter((share) => share.status === "active");
+  const recentRecords = dashboard.records.slice(0, 4);
 
   return (
     <AppShell title="Patient dashboard" subtitle="Control your medical profile, connected hospitals, sharing, and emergency access.">
       {error && <div className="error-state">{error}</div>}
       {status && <div className="success-state">{status}</div>}
-      <div className="metric-grid">
-        <MetricCard label="Connected hospitals" value={String(connected.length)} icon={<Building2 />} />
-        <MetricCard label="Medical records" value={String(dashboard.records.length)} tone="teal" icon={<FileText />} />
-        <MetricCard label="Active shares" value={String(dashboard.shares.filter((share) => share.status === "active").length)} tone="green" icon={<Share2 />} />
-        <MetricCard label="Emergency code" value={dashboard.profile.emergencyCode ?? "Disabled"} tone="amber" icon={<Ambulance />} />
-      </div>
-      <section className="panel-grid">
-        <article className="panel">
-          <h2>Medical profile</h2>
-          <div className="profile-list">
+      <section className="patient-dashboard-grid">
+        <article className="panel profile-panel">
+          <div className="panel-title-row">
+            <h2>My profile summary</h2>
+            <a href="/patient/profile">View profile</a>
+          </div>
+          <div className="profile-hero">
+            <div className="avatar-ring">{initials(dashboard.profile.fullName)}</div>
+            <div>
+              <h3>{dashboard.profile.fullName}</h3>
+              <p>{ageFromDate(dashboard.profile.dateOfBirth)} · HealthBridge patient · {dashboard.profile.bloodGroup}</p>
+              <p>{connected.length} connected hospital{connected.length === 1 ? "" : "s"}</p>
+              <p>{formatContact(dashboard.profile.emergencyContact) || "Emergency contact not set"}</p>
+            </div>
+          </div>
+          <div className="profile-stat-row">
+            <span>Hospitals<strong>{connected.length}</strong></span>
+            <span>Records<strong>{dashboard.records.length}</strong></span>
+            <span>Allergies<strong>{dashboard.profile.allergies[0] ?? "None"}</strong></span>
             <span>Blood group<strong>{dashboard.profile.bloodGroup}</strong></span>
-            <span>Allergies<strong>{dashboard.profile.allergies.join(", ") || "None recorded"}</strong></span>
-            <span>Chronic conditions<strong>{dashboard.profile.chronicConditions.join(", ") || "None recorded"}</strong></span>
-            <span>Current medications<strong>{dashboard.profile.currentMedications.join(", ") || "None recorded"}</strong></span>
-            <span>Emergency contact<strong>{formatContact(dashboard.profile.emergencyContact) || "Not set"}</strong></span>
           </div>
         </article>
-        <article className="panel" id="emergency">
+        <article className="panel connected-panel">
+          <div className="panel-title-row">
+            <h2>Connected hospitals</h2>
+            <a href="/patient/profile">View all</a>
+          </div>
+          <div className="hospital-list">
+            {connected.slice(0, 4).map((hospital) => (
+              <div className="hospital-row" key={hospital.id}>
+                <Building2 size={18} />
+                <span><strong>{hospital.name}</strong><small>{[hospital.city, hospital.state].filter(Boolean).join(", ")}</small></span>
+                <b>Connected</b>
+              </div>
+            ))}
+          </div>
+        </article>
+        <article className="panel emergency-panel" id="emergency">
           <h2>Emergency access</h2>
-          <div className="qr-card">{dashboard.profile.emergencyCode ?? "Not enabled"}</div>
+          <div className="emergency-code-card">
+            <span>Your emergency code</span>
+            <strong>{dashboard.profile.emergencyCode ?? "Not enabled"}</strong>
+            <small>Scanned 1 time · last 7 days ago</small>
+          </div>
+          <div className="qr-card">{dashboard.profile.emergencyCode ? "QR" : "OFF"}</div>
           <p>Emergency staff see only critical info first. Every access is logged for patient review.</p>
           <button className="secondary-button" type="button" onClick={enableEmergency}>Generate new code</button>
         </article>
       </section>
-      <section className="panel" id="records">
-        <h2>Medical history</h2>
-        {dashboard.records.length === 0 ? <div className="empty-state">No records have synced yet.</div> : (
-          <DataTable
-            headers={["Date", "Type", "Title", "Summary", "Critical"]}
-            rows={dashboard.records.map((record) => [
-              formatDate(record.date),
-              <span className={record.critical ? "tag amber" : "tag"}>{record.type}</span>,
-              record.title,
-              record.summary,
-              record.critical ? "Yes" : "No"
-            ])}
-          />
-        )}
+      <section className="patient-dashboard-grid lower">
+        <article className="panel record-card-list" id="records">
+          <div className="panel-title-row">
+            <h2>Medical records</h2>
+            <a href="/patient/records">View all</a>
+          </div>
+          {recentRecords.length === 0 ? <div className="empty-state">No records have synced yet.</div> : recentRecords.map((record) => (
+            <div className="record-row" key={record.id}>
+              <FileText size={18} />
+              <span><strong>{record.title}</strong><small>{record.type} · {formatDate(record.date)}</small></span>
+              <b>{record.critical ? "Critical" : "PDF"}</b>
+            </div>
+          ))}
+        </article>
+        <article className="panel consent-preview">
+          <div className="panel-title-row">
+            <h2>Consent sharing</h2>
+            <a href="/patient/sharing">View all</a>
+          </div>
+          {activeShares.length === 0 ? <div className="empty-state">No active shares.</div> : activeShares.slice(0, 3).map((share) => (
+            <div className="share-row" key={share.id}>
+              <Share2 size={18} />
+              <span><strong>{hospitals.find((hospital) => hospital.id === share.toHospitalId)?.name ?? "Shared hospital"}</strong><small>{share.scopes.join(", ")}</small></span>
+              <button className="small-button" onClick={() => revoke(share.id)}>Revoke</button>
+            </div>
+          ))}
+        </article>
+        <article className="panel audit-preview">
+          <div className="panel-title-row">
+            <h2>Audit history</h2>
+            <a href="/patient/audit">View all</a>
+          </div>
+          <DataTable headers={["Who accessed", "What", "When"]} rows={dashboard.auditLogs.slice(0, 5).map((log) => [log.actor ?? log.role, log.action, formatDate(log.date)])} />
+        </article>
       </section>
       <section className="panel-grid">
         <article className="panel">
