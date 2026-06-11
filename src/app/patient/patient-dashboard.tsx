@@ -106,6 +106,7 @@ export function PatientDashboard() {
   return (
     <AppShell title="Patient dashboard" subtitle="Control your medical profile, connected hospitals, sharing, and emergency access.">
       {error && <div className="error-state">{error}</div>}
+      <div style={{ marginBottom: 12 }}><Link to="/patient/ai-chat" className="secondary-button">Open AI assistant</Link></div>
       {status && <div className="success-state">{status}</div>}
       <section className="patient-dashboard-grid">
         <article className="panel profile-panel">

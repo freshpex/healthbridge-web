@@ -208,6 +208,9 @@ export const healthbridgeService = {
       instructions: string;
     }>("/qrcode/profile", {}, token),
 
+  aiChat: async (token: string, messages: { role: "user" | "assistant" | "system"; content: string }[]) =>
+    apiClient.request<{ id: string; reply: string }>("/ai/chat", { method: "POST", body: JSON.stringify({ messages }) }, token),
+
   getAuditLogs: async (token: string, patientId?: string) =>
     apiClient.request<RawAuditLog[]>(`/audit-logs${patientId ? `?patientId=${patientId}` : ""}`, {}, token).then((logs) => logs.map(normalizeAudit))
 };
