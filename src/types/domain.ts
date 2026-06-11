@@ -21,6 +21,7 @@ export interface Hospital {
   contactEmail?: string;
   connectedPatients?: number;
   connectedPatientIds?: string[];
+  distance?: number;
 }
 
 export interface Laboratory {

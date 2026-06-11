@@ -280,6 +280,7 @@ button:disabled { cursor: not-allowed; opacity: 0.65; }
   .top-nav nav.open { display: grid; }
   .top-nav nav a { padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-weight: 800; }
   .nav-cta, .account-button { grid-column: 1 / -1; width: 100%; }
+  .side-nav { display: none; }
   .hero-section { padding-top: 38px; }
   .hero-copy h1 { font-size: 3rem; }
   .metric-grid, .feature-band, .metric-grid.two { grid-template-columns: 1fr; }

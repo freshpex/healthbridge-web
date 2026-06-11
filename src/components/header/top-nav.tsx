@@ -3,19 +3,23 @@ import { Link, NavLink } from "react-router-dom";
 import { LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "../../app/auth/hooks/use-auth";
 import { landingForRole } from "../../utilities/rbac";
-import { roleNavigation } from "../sidebar/side-nav";
+import { roleNavigation } from "../sidebar/role-navigation";
 import { Logo } from "../static/logo";
+
+type NavLinkItem = { to: string; label: string };
 
 export function TopNav() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
-  const publicLinks = [
+    const publicLinks: NavLinkItem[] = [
     { to: "/product", label: "Product" },
     { to: "/hospitals", label: "For hospitals" },
     { to: "/security", label: "Security" },
     { to: "/pricing", label: "Pricing" }
   ];
-  const navLinks = user ? roleNavigation[user.role].map((item) => ({ to: item.to, label: item.label })) : publicLinks;
+  const navLinks: NavLinkItem[] = user
+    ? roleNavigation[user.role].map((item): NavLinkItem => ({ to: item.to, label: item.label }))
+    : publicLinks;
 
   const close = () => setOpen(false);
 

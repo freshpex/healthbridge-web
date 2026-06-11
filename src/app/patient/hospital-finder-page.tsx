@@ -199,8 +199,8 @@ export function HospitalFinderPage() {
             <article key={hospital.id} className="hospital-card">
               <div className="hospital-header">
                 <h3>{hospital.name}</h3>
-                {(hospital as any).distance && (
-                  <span className="distance-badge">{(hospital as any).distance} km</span>
+                {hospital.distance !== undefined && (
+                  <span className="distance-badge">{hospital.distance} km</span>
                 )}
               </div>
 

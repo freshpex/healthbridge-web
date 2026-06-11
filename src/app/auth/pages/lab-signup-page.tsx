@@ -22,8 +22,6 @@ export function LabSignUpPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  if (user) return <Navigate to="/dashboard" replace />;
-
   const testTypes = [
     "Blood Tests",
     "Urinalysis",
@@ -100,6 +98,8 @@ export function LabSignUpPage() {
       setSubmitting(false);
     }
   };
+
+  if (user) return <Navigate to="/dashboard" replace />;
 
   return (
     <main className="auth-page">
