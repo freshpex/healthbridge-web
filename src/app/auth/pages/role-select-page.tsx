@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Users, Building2, Stethoscope, AlertCircle, Home } from "lucide-react";
+import { Users, Building2, Stethoscope, AlertCircle, Home, FlaskConical } from "lucide-react";
 
 const roles = [
   {
@@ -25,6 +25,14 @@ const roles = [
     icon: Stethoscope,
     color: "#0288D1",
     path: "/auth/doctor-signup"
+  },
+  {
+    id: "laboratory",
+    label: "Laboratory",
+    description: "Upload test results, manage patient samples, track analyses",
+    icon: FlaskConical,
+    color: "#7B1FA2",
+    path: "/auth/lab-signup"
   },
   {
     id: "emergency",
@@ -54,7 +62,7 @@ export function RoleSelectPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
             gap: "24px",
             marginBottom: "32px"
           }}

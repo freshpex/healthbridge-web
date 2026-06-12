@@ -17,7 +17,8 @@ export const roleNavigation: Record<Role, Array<{ to: string; label: string; ico
   doctor: [{ to: "/doctor", label: "Portal", icon: Activity }],
   hospital_admin: [{ to: "/hospital", label: "Hospital", icon: Building2 }],
   super_admin: [{ to: "/admin", label: "Admin", icon: ShieldCheck }],
-  emergency_staff: [{ to: "/emergency", label: "Emergency", icon: Ambulance }]
+  emergency_staff: [{ to: "/emergency", label: "Emergency", icon: Ambulance }],
+  laboratory: [{ to: "/laboratory", label: "Laboratory", icon: FlaskConical }]
 };
 
 export function SideNav({ role }: { role: Role }) {

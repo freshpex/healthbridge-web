@@ -49,6 +49,7 @@ export const authService = {
     doctor: "/doctor",
     hospital_admin: "/hospital",
     super_admin: "/admin",
-    emergency_staff: "/emergency"
+    emergency_staff: "/emergency",
+    laboratory: "/laboratory"
   })[role]
 };

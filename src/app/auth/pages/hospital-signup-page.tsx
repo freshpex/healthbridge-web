@@ -241,7 +241,7 @@ export function HospitalSignUpPage() {
             color: "#E65100"
           }}
         >
-          <strong>Note:</strong> Super admin approval required. Your registration will be reviewed within 24 hours. You'll receive an email with your login credentials once approved.
+          <strong>Note:</strong> HealthBridge approval required. Your registration will be reviewed within 24 hours. You'll receive an email with your login credentials once approved.
         </div>
       </section>
     </main>

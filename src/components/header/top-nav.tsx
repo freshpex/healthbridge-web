@@ -31,11 +31,34 @@ export function TopNav() {
         ))}
       </nav>
       {user ? (
-        <button className="ghost-button account-button" onClick={() => { close(); logout(); }} title="Sign out">
-          <LogOut size={18} /> {user.name}
+        <button
+          className="ghost-button account-button"
+          onClick={() => {
+            close();
+            logout();
+          }}
+          title="Sign out"
+        >
+          <LogOut size={18} /> Logout
         </button>
       ) : (
-        <Link className="primary-button nav-cta" to="/signin" onClick={close}>Sign in</Link>
+        <div className="auth-actions">
+          <Link
+            className="ghost-button account-button"
+            to="/auth/role-select"
+            onClick={close}
+          >
+            Create account
+          </Link>
+
+          <Link
+            className="primary-button nav-cta"
+            to="/signin"
+            onClick={close}
+          >
+            Sign in
+          </Link>
+        </div>
       )}
     </header>
   );

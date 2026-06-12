@@ -6,6 +6,7 @@ import { RoleSelectPage } from "../app/auth/pages/role-select-page";
 import { HospitalSignUpPage } from "../app/auth/pages/hospital-signup-page";
 import { DoctorSignUpPage } from "../app/auth/pages/doctor-signup-page";
 import { EmergencySignUpPage } from "../app/auth/pages/emergency-signup-page";
+import { LabSignUpPage } from "../app/auth/pages/lab-signup-page";
 import { DoctorDashboard } from "../app/doctor/doctor-dashboard";
 import { EmergencyPage } from "../app/emergency/emergency-page";
 import { HospitalDashboard } from "../app/hospital/hospital-dashboard";
@@ -23,6 +24,7 @@ import { SymptomCheckerPage } from "../app/patient/symptom-checker-page";
 import { HospitalFinderPage } from "../app/patient/hospital-finder-page";
 import { AuthProvider } from "../app/auth/hooks/auth-provider";
 import { ProtectedRoute } from "./protected-route";
+import { LabDashboard } from "../app/laboratory/lab-dashboard";
 
 export function AppRouter() {
   return (
@@ -43,6 +45,7 @@ export function AppRouter() {
           <Route path="/auth/hospital-signup" element={<HospitalSignUpPage />} />
           <Route path="/auth/doctor-signup" element={<DoctorSignUpPage />} />
           <Route path="/auth/emergency-signup" element={<EmergencySignUpPage />} />
+          <Route path="/auth/lab-signup" element={<LabSignUpPage />} />
           <Route path="/patient" element={<ProtectedRoute allowed={["patient"]}><PatientDashboard /></ProtectedRoute>} />
           <Route path="/patient/records" element={<ProtectedRoute allowed={["patient"]}><PatientRecordsPage /></ProtectedRoute>} />
           <Route path="/patient/labs" element={<ProtectedRoute allowed={["patient"]}><PatientLabsPage /></ProtectedRoute>} />
@@ -55,6 +58,7 @@ export function AppRouter() {
           <Route path="/patient/hospital-finder" element={<ProtectedRoute allowed={["patient"]}><HospitalFinderPage /></ProtectedRoute>} />
           <Route path="/doctor" element={<ProtectedRoute allowed={["doctor"]}><DoctorDashboard /></ProtectedRoute>} />
           <Route path="/hospital" element={<ProtectedRoute allowed={["hospital_admin"]}><HospitalDashboard /></ProtectedRoute>} />
+          <Route path="/laboratory" element={<ProtectedRoute allowed={["laboratory"]}><LabDashboard /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute allowed={["super_admin"]}><AdminDashboard /></ProtectedRoute>} />
           <Route path="/emergency" element={<ProtectedRoute allowed={["emergency_staff", "doctor"]}><EmergencyPage /></ProtectedRoute>} />
         </Routes>

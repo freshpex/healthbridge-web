@@ -1,4 +1,4 @@
-export type Role = "patient" | "doctor" | "hospital_admin" | "super_admin" | "emergency_staff";
+export type Role = "patient" | "doctor" | "hospital_admin" | "super_admin" | "emergency_staff" | "laboratory";
 
 export interface User {
   id: string;
@@ -21,6 +21,20 @@ export interface Hospital {
   contactEmail?: string;
   connectedPatients?: number;
   connectedPatientIds?: string[];
+}
+
+export interface Laboratory {
+  _id?: string;
+  id: string;
+  labName: string;
+  status: "pending" | "approved" | "suspended";
+  certificationNumber: string;
+  department: string;
+  hospitalId?: string;
+  hospitalName?: string;
+  testCapabilities: string[];
+  isActive: boolean;
+  isStandalone: boolean;
 }
 
 export interface PatientProfile {
