@@ -2,6 +2,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AdminDashboard } from "../app/admin/admin-dashboard";
 import { SignInPage } from "../app/auth/pages/sign-in-page";
 import { SignUpPage } from "../app/auth/pages/sign-up-page";
+import { RoleSelectPage } from "../app/auth/pages/role-select-page";
+import { HospitalSignUpPage } from "../app/auth/pages/hospital-signup-page";
+import { DoctorSignUpPage } from "../app/auth/pages/doctor-signup-page";
+import { EmergencySignUpPage } from "../app/auth/pages/emergency-signup-page";
 import { DoctorDashboard } from "../app/doctor/doctor-dashboard";
 import { EmergencyPage } from "../app/emergency/emergency-page";
 import { HospitalDashboard } from "../app/hospital/hospital-dashboard";
@@ -35,6 +39,10 @@ export function AppRouter() {
           <Route path="/disclaimer" element={<PublicPage page="disclaimer" />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/auth/role-select" element={<RoleSelectPage />} />
+          <Route path="/auth/hospital-signup" element={<HospitalSignUpPage />} />
+          <Route path="/auth/doctor-signup" element={<DoctorSignUpPage />} />
+          <Route path="/auth/emergency-signup" element={<EmergencySignUpPage />} />
           <Route path="/patient" element={<ProtectedRoute allowed={["patient"]}><PatientDashboard /></ProtectedRoute>} />
           <Route path="/patient/records" element={<ProtectedRoute allowed={["patient"]}><PatientRecordsPage /></ProtectedRoute>} />
           <Route path="/patient/labs" element={<ProtectedRoute allowed={["patient"]}><PatientLabsPage /></ProtectedRoute>} />

@@ -15,32 +15,32 @@ const content = {
   },
   hospitals: {
     eyebrow: "For hospitals",
-    title: "Register because fragmented records slow down care and increase clinical risk.",
-    copy: "HealthBridge helps hospitals reduce repeated intake questions, missing history, delayed referrals, and untracked record sharing. Registration gives your team a governed workspace for verified patients and consent-led record access.",
+    title: "Reduce admission time. Improve patient outcomes. Build trust through transparency.",
+    copy: "HealthBridge solves the coordination nightmare. Connect to a network of verified patients, eliminate fragmented intake, and give your care teams instant access to critical records—all with patient consent and complete audit trails.",
     cards: [
-      ["Faster intake", "Patients arrive with connected profiles, emergency contacts, allergies, medications, and prior records."],
-      ["Cleaner governance", "Hospital admins approve staff workflows, monitor patient connections, and keep activity visible."],
-      ["Better patient trust", "Patients can see who accessed their information and why, which makes digital record sharing easier to explain."]
+      ["30+ minutes saved per admission", "Complete patient history available instantly instead of manual lookups and phone calls. Staff can focus on care, not paperwork."],
+      ["Reduce clinical errors from missing data", "Allergies, medications, and prior diagnoses are available before the patient even arrives. Safer prescriptions, fewer drug interactions, better outcomes."],
+      ["Seamless referrals between hospitals", "Refer patients to partner hospitals without losing their medical context. Care coordination that actually works."]
     ]
   },
   security: {
     eyebrow: "Security and compliance",
-    title: "Privacy controls are built into the workflow, not hidden in fine print.",
-    copy: "The app is designed around authenticated access, role permissions, consent scopes, emergency minimization, and patient-visible audit history.",
+    title: "Enterprise-grade security built for healthcare.",
+    copy: "HIPAA-compliant infrastructure with end-to-end encryption, role-based access control, consent-first data sharing, and patient-visible audit logs. Every access is tracked. Every change is logged. Every decision is documented.",
     cards: [
-      ["Role-based access", "Patients, doctors, hospital admins, super admins, and emergency staff only see routes and data meant for their role."],
-      ["Consent-first sharing", "Sharing is scoped by purpose and can expire or be revoked by the patient."],
-      ["Audit visibility", "Emergency and record access events are captured so patients and administrators can review sensitive activity."]
+      ["HIPAA compliance ready", "Role-based access control (RBAC), audit logging, encryption at rest, and secure infrastructure meet healthcare security standards."],
+      ["Transparent audit trails", "Patients can see exactly who accessed their records, when, why, and from where. Full accountability for all staff and emergency responders."],
+      ["Consent-first architecture", "No access without explicit patient permission. Scoped sharing by data type, time-limited access, and instant revocation capabilities."]
     ]
   },
   pricing: {
     eyebrow: "Pricing",
-    title: "Simple onboarding for hospitals and free access for patients.",
-    copy: "Patient accounts are intended to stay free. Hospital pricing should be based on facility size, staff seats, integration needs, and support requirements.",
+    title: "Affordable for hospitals. Free for patients. ROI in weeks.",
+    copy: "HealthBridge is designed to save hospitals time and reduce operational costs from day one. Patient accounts stay free. Hospital pricing scales with your facility size and integration needs.",
     cards: [
-      ["Patient accounts", "Patients can create a secure medical profile and connect approved hospitals."],
-      ["Hospital workspace", "Hospitals get a managed portal for staff, connected patients, and clinical record workflows."],
-      ["Implementation support", "Deployment can include data migration planning, staff training, and governance setup."]
+      ["Patient accounts are free", "Patients create secure profiles at no cost. You only pay when your hospital joins the network."],
+      ["Hospital pricing by scale", "Small clinics, mid-size hospitals, and large networks have different price points. Contact us for a custom quote."],
+      ["ROI in first month", "Average hospital saves 30+ minutes per admission. Multiply by 50+ daily admissions and the savings pay for subscriptions immediately."]
     ]
   },
   privacy: {

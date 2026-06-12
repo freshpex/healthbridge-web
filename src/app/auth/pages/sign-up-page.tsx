@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Building2, UserPlus } from "lucide-react";
+import { Building2, UserPlus, Home } from "lucide-react";
 import { TopNav } from "../../../components/header/top-nav";
 import { healthbridgeService } from "../../../services/healthbridge-service";
 import type { Hospital } from "../../../types/domain";
@@ -60,7 +60,12 @@ export function SignUpPage() {
   return (
     <>
       <TopNav />
-      <main className="signup-page">
+      <div style={{ position: "fixed", top: "20px", left: "20px", zIndex: 100 }}>
+        <Link to="/" className="secondary-button" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Home size={18} /> Back to home
+        </Link>
+      </div>
+      <main className="signup-page" style={{ marginTop: "20px" }}>
         <section>
           <h1>Create your patient record bridge</h1>
           <p>Select approved hospitals that should verify and sync your records during signup.</p>
@@ -88,11 +93,13 @@ export function SignUpPage() {
               ))}
             </div>
             {error && <div className="error-state">{error}</div>}
-            <button className="primary-button" type="submit" disabled={submitting || loading}>
+            <button className="primary-button" type="submit" disabled={submitting || loading} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
               <UserPlus size={18} />
               {submitting ? "Creating account..." : "Create patient account"}
             </button>
-            <Link to="/signin">Already have an account?</Link>
+            <div style={{ textAlign: "center", fontSize: "14px", color: "#666" }}>
+              Already have an account? <Link to="/signin" style={{ fontWeight: "900", color: "#0F4173" }}>Sign in</Link>
+            </div>
           </form>
         </section>
       </main>

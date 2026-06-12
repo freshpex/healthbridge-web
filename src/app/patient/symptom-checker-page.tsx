@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AlertCircle, CheckCircle2, Heart, XCircle } from "lucide-react";
 import { AppShell } from "../../components/layout/app-shell";
 import { healthbridgeService } from "../../services/healthbridge-service";
@@ -58,7 +58,7 @@ export function SymptomCheckerPage() {
   return (
     <AppShell
       title="AI Symptom Checker"
-      subtitle="Describe your symptoms and get guidance on next steps. Not a diagnosis—always consult a healthcare provider."
+      subtitle="Get instant guidance on symptom urgency and find the right care. Triage made faster and more consistent."
     >
       <div className="symptom-checker-grid">
         <section className="panel symptom-input-panel">

@@ -7,7 +7,7 @@ import { healthbridgeService } from "../../services/healthbridge-service";
 import { useAuth } from "../auth/hooks/use-auth";
 
 export function HospitalFinderPage() {
-  const { token } = useAuth();
+  useAuth();
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [allHospitals, setAllHospitals] = useState<Hospital[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,9 +52,11 @@ export function HospitalFinderPage() {
       let results: Hospital[];
 
       if (useLocation && latitude !== null && longitude !== null) {
-        results = await healthbridgeService.findNearbyHospitals(latitude, longitude, radius, specialty || undefined);
+        const nearbyHospitals = await healthbridgeService.findNearbyHospitals(latitude, longitude, radius, specialty || undefined);
+        results = nearbyHospitals.map(h => ({ ...h, status: 'approved' as const }));
       } else if (searchQuery) {
-        results = await healthbridgeService.searchHospitals(searchQuery, specialty || undefined);
+        const searchResults = await healthbridgeService.searchHospitals(searchQuery, specialty || undefined);
+        results = searchResults.map(h => ({ ...h, status: 'approved' as const }));
       } else {
         results = allHospitals;
       }
@@ -88,7 +90,7 @@ export function HospitalFinderPage() {
   return (
     <AppShell
       title="Hospital Finder"
-      subtitle="Find the right healthcare facility based on your condition, location, and specialties."
+      subtitle="Find specialized care nearby. Search by specialty, location, or distance. Connect to institutions you trust."
     >
       <section className="hospital-finder-search">
         <form onSubmit={handleSearch} className="search-form">
