@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { Building2, Home } from "lucide-react";
 import { useAuth } from "../hooks/use-auth";
+import { authService } from "../services/auth-service";
 
 export function HospitalSignUpPage() {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ export function HospitalSignUpPage() {
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   if (user) return <Navigate to="/dashboard" replace />;
 
@@ -53,22 +54,17 @@ export function HospitalSignUpPage() {
     setError("");
 
     try {
-      // TODO: Implement hospital signup API call
-      // const response = await hospitalService.registerHospital({
-      //   name: hospitalName,
-      //   email,
-      //   password,
-      //   address,
-      //   city,
-      //   state,
-      //   contactPhone,
-      //   specialties
-      // });
-      // navigate("/signin");
-      
-      // For now, show a placeholder success message
-      setSuccess(true);
-      setTimeout(() => navigate("/signin"), 2000);
+      const session = await authService.signupHospital({
+        hospitalName,
+        email,
+        password,
+        address,
+        city,
+        state,
+        specialties
+      });
+      setSuccessMessage(`Registration submitted for ${session.user.email}. Redirecting to sign in...`);
+      setTimeout(() => navigate("/signin"), 1500);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Registration failed");
     } finally {
@@ -104,7 +100,7 @@ export function HospitalSignUpPage() {
           </div>
         </div>
 
-        {success && (
+        {successMessage && (
           <div
             style={{
               padding: "16px",
@@ -116,7 +112,7 @@ export function HospitalSignUpPage() {
               fontWeight: "500"
             }}
           >
-            ✓ Registration submitted successfully! Our team will review your application and contact you within 24 hours.
+            ✓ {successMessage}
           </div>
         )}
 

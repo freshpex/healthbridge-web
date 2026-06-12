@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { AlertCircle, Home } from "lucide-react";
 import { useAuth } from "../hooks/use-auth";
+import { authService } from "../services/auth-service";
 
 export function EmergencySignUpPage() {
   const { user } = useAuth();
@@ -15,7 +16,7 @@ export function EmergencySignUpPage() {
   const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   if (user) return <Navigate to="/dashboard" replace />;
 
@@ -36,20 +37,17 @@ export function EmergencySignUpPage() {
     setError("");
 
     try {
-      // TODO: Implement emergency staff signup API call
-      // const response = await emergencyService.registerStaff({
-      //   fullName,
-      //   organizationName,
-      //   role,
-      //   certificationNumber,
-      //   email,
-      //   password,
-      //   phone
-      // });
-      // navigate("/signin");
-
-      setSuccess(true);
-      setTimeout(() => navigate("/signin"), 2000);
+      const request = await authService.requestEmergencyStaffInvite({
+        fullName,
+        organizationName,
+        emergencyRole: role,
+        certificationNumber,
+        email,
+        password,
+        phone
+      });
+      setSuccessMessage(`Verification request ${request.id} submitted. Redirecting to sign in...`);
+      setTimeout(() => navigate("/signin"), 1500);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Registration failed");
     } finally {
@@ -85,7 +83,7 @@ export function EmergencySignUpPage() {
           </div>
         </div>
 
-        {success && (
+        {successMessage && (
           <div
             style={{
               padding: "16px",
@@ -97,7 +95,7 @@ export function EmergencySignUpPage() {
               fontWeight: "500"
             }}
           >
-            ✓ Registration successful! You can now sign in with your credentials.
+            ✓ {successMessage}
           </div>
         )}
 
@@ -184,7 +182,7 @@ export function EmergencySignUpPage() {
 
           <button className="primary-button" type="submit" disabled={submitting} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginTop: "24px" }}>
             <AlertCircle size={18} />
-            {submitting ? "Registering..." : "Create emergency account"}
+            {submitting ? "Submitting..." : "Request emergency access"}
           </button>
 
           <p style={{ textAlign: "center", fontSize: "13px", color: "#666", marginTop: "16px" }}>

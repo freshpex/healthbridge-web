@@ -3,6 +3,7 @@ import { Link, useNavigate, Navigate } from "react-router-dom";
 import { FlaskConical, Home } from "lucide-react";
 import { useAuth } from "../hooks/use-auth";
 import { healthbridgeService } from "../../../services/healthbridge-service";
+import { authService } from "../services/auth-service";
 import type { Hospital } from "../../../types/domain";
 
 export function LabSignUpPage() {
@@ -20,7 +21,7 @@ export function LabSignUpPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const testTypes = [
     "Blood Tests",
@@ -77,21 +78,17 @@ export function LabSignUpPage() {
     setError("");
 
     try {
-      // TODO: Implement lab signup API call
-      // const response = await labService.registerLab({
-      //   labName,
-      //   certificationNumber,
-      //   department,
-      //   hospitalId: labType === "affiliated" ? selectedHospital : undefined,
-      //   testCapabilities,
-      //   email,
-      //   password
-      // });
-      // navigate("/signin");
-
-      // For now, show success message
-      setSuccess(true);
-      setTimeout(() => navigate("/signin"), 2000);
+      const session = await authService.signupLaboratory({
+        labName,
+        certificationNumber,
+        department,
+        hospitalId: labType === "affiliated" ? selectedHospital : undefined,
+        testCapabilities,
+        email,
+        password
+      });
+      setSuccessMessage(`Laboratory registration submitted for ${session.user.email}. Redirecting to sign in...`);
+      setTimeout(() => navigate("/signin"), 1500);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Registration failed");
     } finally {
@@ -129,7 +126,7 @@ export function LabSignUpPage() {
           </div>
         </div>
 
-        {success && (
+        {successMessage && (
           <div
             style={{
               padding: "16px",
@@ -141,7 +138,7 @@ export function LabSignUpPage() {
               fontWeight: "500"
             }}
           >
-            ✓ Registration submitted successfully! Our team will review your application and contact you within 24 hours.
+            ✓ {successMessage}
           </div>
         )}
 

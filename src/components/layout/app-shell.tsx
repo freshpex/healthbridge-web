@@ -16,7 +16,7 @@ export function AppShell({ title, subtitle, children }: { title: string; subtitl
               <h1>{title}</h1>
               <p>{subtitle}</p>
             </div>
-            <div className="status-pill">HIPAA-ready MVP controls</div>
+            <div className="status-pill">HIPAA-ready access controls</div>
           </div>
           {children}
         </section>

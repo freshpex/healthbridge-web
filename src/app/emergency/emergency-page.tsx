@@ -4,6 +4,7 @@ import { AppShell } from "../../components/layout/app-shell";
 import { MetricCard } from "../../components/cards/metric-card";
 import { healthbridgeService } from "../../services/healthbridge-service";
 import { useAuth } from "../auth/hooks/use-auth";
+import { EmergencyCasesPanel } from "./emergency-cases-panel";
 
 type EmergencyResult = Awaited<ReturnType<typeof healthbridgeService.resolveEmergency>>;
 
@@ -33,6 +34,7 @@ export function EmergencyPage() {
   return (
     <AppShell title="Emergency access" subtitle="Scan or enter a patient code to reveal critical information and log the access event.">
       <section className="panel-grid">
+        <EmergencyCasesPanel token={token} />
         <article className="panel">
           <h2>Resolve emergency code</h2>
           <form className="form-stack" onSubmit={submit}>

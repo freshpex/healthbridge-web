@@ -19,7 +19,7 @@ npm run test
 npm run build
 ```
 
-## Demo Users
+## Test Accounts
 
 Run the backend seed script, then use seeded backend credentials on `/signin`. Password for seeded users: `Password123!`.
 

@@ -3,7 +3,10 @@ import type {
   Appointment,
   AuditLog,
   ConsentShare,
+  EmergencyCase,
   Hospital,
+  Laboratory,
+  LabRequest,
   LabResult,
   MedicalRecord,
   PatientDashboardPayload,
@@ -11,14 +14,19 @@ import type {
   Prescription,
   Role,
   Upload,
-  User
+  User,
+  WorkspacePayload,
+  AccountProfilePayload
 } from "../types/domain";
 
 type RawHospital = Omit<Hospital, "id"> & { _id: string; connectedPatientIds?: string[] };
+type RawLaboratory = Omit<Laboratory, "id" | "status"> & { _id: string; isActive: boolean; status?: Laboratory["status"] };
 type RawPatient = Omit<PatientProfile, "id" | "connectedHospitalIds"> & { _id: string; hospitalIds?: RawHospital[] | string[] };
 type RawRecord = Omit<MedicalRecord, "id" | "date"> & { _id: string; recordDate?: string; createdAt?: string };
 type RawShare = Omit<ConsentShare, "id"> & { _id: string; toHospitalId: string | RawHospital };
+type RawEmergencyCase = Omit<EmergencyCase, "id"> & { _id: string };
 type RawAuditLog = Omit<AuditLog, "id" | "role" | "date"> & { _id: string; actorRole: Role | "system"; createdAt: string };
+type RawAppointment = Omit<Appointment, "id" | "hospitalId" | "doctorId"> & { _id: string; hospitalId?: string | RawHospital; doctorId?: string | { _id?: string; id?: string; name?: string } };
 
 const idOf = (value: { _id?: string; id?: string } | string | undefined) => {
   if (!value) return "";
@@ -30,6 +38,12 @@ export const normalizeHospital = (hospital: RawHospital | Hospital): Hospital =>
   ...hospital,
   id: idOf(hospital),
   connectedPatients: hospital.connectedPatients ?? hospital.connectedPatientIds?.length ?? 0
+});
+
+export const normalizeLaboratory = (laboratory: RawLaboratory | Laboratory): Laboratory => ({
+  ...laboratory,
+  id: idOf(laboratory),
+  status: laboratory.status ?? (laboratory.isActive ? "approved" : "pending")
 });
 
 export const normalizePatient = (patient: RawPatient): PatientProfile => ({
@@ -62,6 +76,18 @@ const normalizeAudit = (log: RawAuditLog): AuditLog => ({
   date: log.createdAt
 });
 
+const normalizeEmergencyCase = (emergencyCase: RawEmergencyCase): EmergencyCase => ({
+  ...emergencyCase,
+  id: idOf(emergencyCase)
+});
+
+const normalizeAppointment = (appointment: RawAppointment | Appointment): Appointment => ({
+  ...appointment,
+  id: idOf(appointment),
+  hospitalId: idOf(appointment.hospitalId as RawHospital | string | undefined),
+  doctorId: idOf(appointment.doctorId as { _id?: string; id?: string } | string | undefined)
+});
+
 export const healthbridgeService = {
   listHospitals: async () => {
     const hospitals = await apiClient.request<RawHospital[]>("/hospitals");
@@ -74,7 +100,7 @@ export const healthbridgeService = {
       records: RawRecord[];
       labResults: LabResult[];
       prescriptions: Prescription[];
-      appointments: Appointment[];
+      appointments: RawAppointment[];
       shares: RawShare[];
       auditLogs: RawAuditLog[];
       uploads: Upload[];
@@ -85,7 +111,7 @@ export const healthbridgeService = {
       records: data.records.map(normalizeRecord),
       labResults: data.labResults,
       prescriptions: data.prescriptions,
-      appointments: data.appointments,
+      appointments: data.appointments.map(normalizeAppointment),
       shares: data.shares.map(normalizeShare),
       auditLogs: data.auditLogs.map(normalizeAudit),
       uploads: data.uploads
@@ -95,9 +121,48 @@ export const healthbridgeService = {
   getHospitalPatients: async (hospitalId: string, token: string) =>
     apiClient.request<RawPatient[]>(`/hospitals/${hospitalId}/patients`, {}, token).then((patients) => patients.map(normalizePatient)),
 
+  verifyPatientConnection: async (token: string, hospitalId: string, patientId: string) =>
+    apiClient.request<{ verified: boolean }>(`/hospitals/${hospitalId}/verify-patient/${patientId}`, { method: "POST" }, token),
+
+  getHospitalStaff: async (token: string, hospitalId: string) =>
+    apiClient.request<User[]>(`/hospitals/${hospitalId}/staff`, {}, token),
+
   getHospitals: async (token: string) => apiClient.request<RawHospital[]>("/hospitals", {}, token).then((hospitals) => hospitals.map(normalizeHospital)),
 
+  listLaboratories: async (token: string, status?: "active" | "inactive") =>
+    apiClient.request<{ data: RawLaboratory[]; meta: { page: number; limit: number; total: number } }>(
+      `/laboratories${status ? `?status=${status}` : ""}`,
+      {},
+      token
+    ).then((payload) => payload.data.map(normalizeLaboratory)),
+
+  approveLaboratory: async (token: string, laboratoryId: string) =>
+    apiClient.request<RawLaboratory>(`/laboratories/${laboratoryId}/approve`, { method: "PATCH" }, token).then(normalizeLaboratory),
+
+  getOperationalDashboard: async (token: string, hospitalId?: string) => {
+    const [hospitals, users, doctors, laboratories, hospitalPatients, hospitalStaff] = await Promise.all([
+      healthbridgeService.getHospitals(token),
+      healthbridgeService.getUsers(token).catch(() => [] as User[]),
+      healthbridgeService.getDoctors(token).catch(() => [] as unknown[]),
+      healthbridgeService.listLaboratories(token).catch(() => [] as Laboratory[]),
+      hospitalId ? healthbridgeService.getHospitalPatients(hospitalId, token).catch(() => [] as PatientProfile[]) : Promise.resolve([] as PatientProfile[]),
+      hospitalId ? healthbridgeService.getHospitalStaff(token, hospitalId).catch(() => [] as User[]) : Promise.resolve([] as User[])
+    ]);
+
+    return { hospitals, users, doctors, laboratories, hospitalPatients, hospitalStaff };
+  },
+
   getUsers: async (token: string) => apiClient.request<User[]>("/users", {}, token),
+
+  getWorkspace: async (token: string) => apiClient.request<WorkspacePayload>("/users/me/workspace", {}, token),
+
+  getAccountProfile: async (token: string) => apiClient.request<AccountProfilePayload>("/users/me", {}, token),
+
+  updateAccountProfile: async (token: string, payload: Record<string, unknown>) =>
+    apiClient.request<AccountProfilePayload>("/users/me", { method: "PATCH", body: JSON.stringify(payload) }, token),
+
+  changePassword: async (token: string, currentPassword: string, newPassword: string) =>
+    apiClient.request<void>("/users/me/change-password", { method: "POST", body: JSON.stringify({ currentPassword, newPassword }) }, token),
 
   getDoctors: async (token: string) => apiClient.request<unknown[]>("/doctors", {}, token),
 
@@ -110,11 +175,35 @@ export const healthbridgeService = {
   getLabResults: async (token: string, patientId?: string) =>
     apiClient.request<LabResult[]>(`/lab-results${patientId ? `?patientId=${patientId}` : ""}`, {}, token),
 
+  getLabRequests: async (token: string, patientId?: string) =>
+    apiClient.request<LabRequest[]>(`/lab-results/requests${patientId ? `?patientId=${patientId}` : ""}`, {}, token),
+
+  createLabRequest: async (token: string, payload: { patientId: string; hospitalId?: string; laboratoryId?: string; testName: string; priority?: "routine" | "urgent" | "stat"; clinicalNotes?: string }) =>
+    apiClient.request<LabRequest>("/lab-results/requests", { method: "POST", body: JSON.stringify(payload) }, token),
+
+  updateLabRequestStatus: async (token: string, requestId: string, payload: { status: LabRequest["status"]; rejectionReason?: string; clinicalNotes?: string }) =>
+    apiClient.request<LabRequest>(`/lab-results/requests/${requestId}/status`, { method: "PATCH", body: JSON.stringify(payload) }, token),
+
   getPrescriptions: async (token: string, patientId?: string) =>
     apiClient.request<Prescription[]>(`/prescriptions${patientId ? `?patientId=${patientId}` : ""}`, {}, token),
 
   getAppointments: async (token: string, patientId?: string) =>
-    apiClient.request<Appointment[]>(`/appointments${patientId ? `?patientId=${patientId}` : ""}`, {}, token),
+    apiClient.request<RawAppointment[]>(`/appointments${patientId ? `?patientId=${patientId}` : ""}`, {}, token).then((appointments) => appointments.map(normalizeAppointment)),
+
+  createAppointment: async (token: string, payload: { patientId?: string; hospitalId?: string; doctorId?: string; reason: string; scheduledAt: string; status?: Appointment["status"] }) =>
+    apiClient.request<RawAppointment>("/appointments", { method: "POST", body: JSON.stringify(payload) }, token).then(normalizeAppointment),
+
+  updateAppointment: async (token: string, appointmentId: string, payload: { status?: "cancelled" | "reschedule_requested"; scheduledAt?: string; reason?: string }) =>
+    apiClient.request<RawAppointment>(`/appointments/${appointmentId}`, { method: "PATCH", body: JSON.stringify(payload) }, token).then(normalizeAppointment),
+
+  createLabResult: async (token: string, payload: { patientId: string; hospitalId?: string; testName: string; result: string; unit?: string; referenceRange?: string; status?: LabResult["status"]; collectedAt?: string }) =>
+    apiClient.request<LabResult>("/lab-results", { method: "POST", body: JSON.stringify(payload) }, token),
+
+  uploadLabResult: async (token: string, payload: { requestId?: string; patientId?: string; hospitalId?: string; laboratoryId?: string; testName?: string; result: string; unit?: string; referenceRange?: string; status?: "normal" | "abnormal" | "critical"; notes?: string; collectedAt?: string }) =>
+    apiClient.request<LabResult>("/lab-results", { method: "POST", body: JSON.stringify(payload) }, token),
+
+  updateLabResult: async (token: string, resultId: string, payload: Partial<Pick<LabResult, "result" | "unit" | "referenceRange" | "status" | "collectedAt">> & { notes?: string }) =>
+    apiClient.request<LabResult>(`/lab-results/${resultId}`, { method: "PATCH", body: JSON.stringify(payload) }, token),
 
   createRecord: async (token: string, payload: { patientId: string; hospitalId?: string; type: string; title: string; summary: string; critical?: boolean }) =>
     apiClient.request<RawRecord>("/medical-records", { method: "POST", body: JSON.stringify(payload) }, token).then(normalizeRecord),
@@ -130,7 +219,7 @@ export const healthbridgeService = {
   revokeShare: async (token: string, shareId: string) =>
     apiClient.request<RawShare>(`/consent-sharing/${shareId}/revoke`, { method: "PATCH" }, token).then(normalizeShare),
 
-  updateProfile: async (token: string, payload: Partial<Pick<PatientProfile, "bloodGroup" | "allergies" | "chronicConditions" | "currentMedications" | "emergencyContact">>) =>
+  updateProfile: async (token: string, payload: Partial<Pick<PatientProfile, "fullName" | "dateOfBirth" | "gender" | "address" | "bloodGroup" | "allergies" | "chronicConditions" | "currentMedications" | "emergencyContact">> & { avatarUrl?: string; notificationPreferences?: User["notificationPreferences"] }) =>
     apiClient.request<RawPatient>("/patients/me", { method: "PATCH", body: JSON.stringify(payload) }, token).then(normalizePatient),
 
   requestSync: async (token: string, payload: { hospitalId: string; notes?: string }) =>
@@ -156,6 +245,23 @@ export const healthbridgeService = {
       emergencyContact: PatientProfile["emergencyContact"];
       recentCriticalRecords: MedicalRecord[];
     }>("/emergency-access/resolve", { method: "POST", body: JSON.stringify({ code, reason }) }, token),
+
+  listEmergencyCases: async (token: string, params?: { status?: EmergencyCase["status"]; patientId?: string }) => {
+    const query = new URLSearchParams();
+    if (params?.status) query.set("status", params.status);
+    if (params?.patientId) query.set("patientId", params.patientId);
+    const suffix = query.toString();
+    return apiClient.request<RawEmergencyCase[]>(`/emergency-cases${suffix ? `?${suffix}` : ""}`, {}, token).then((cases) => cases.map(normalizeEmergencyCase));
+  },
+
+  createEmergencyCase: async (token: string, payload: { patientId?: string; priority?: EmergencyCase["priority"]; location: string; reason: string; notes?: string }) =>
+    apiClient.request<RawEmergencyCase>("/emergency-cases", { method: "POST", body: JSON.stringify(payload) }, token).then(normalizeEmergencyCase),
+
+  updateEmergencyCase: async (token: string, id: string, payload: Partial<Pick<EmergencyCase, "status" | "priority" | "location" | "reason" | "notes">>) =>
+    apiClient.request<RawEmergencyCase>(`/emergency-cases/${id}`, { method: "PATCH", body: JSON.stringify(payload) }, token).then(normalizeEmergencyCase),
+
+  assignEmergencyCase: async (token: string, id: string, payload: { assignedUserId?: string; assignedServiceId?: string; hospitalId?: string; notes?: string }) =>
+    apiClient.request<RawEmergencyCase>(`/emergency-cases/${id}/assign`, { method: "PATCH", body: JSON.stringify(payload) }, token).then(normalizeEmergencyCase),
 
   assessSymptoms: async (token: string, symptoms: string[], notes?: string) =>
     apiClient.request<{
@@ -189,7 +295,7 @@ export const healthbridgeService = {
       contactEmail: string;
       status: string;
       connectedPatients: number;
-      staff: unknown[];
+      staff: Array<{ _id?: string; id?: string; name: string; role: Role; email?: string }>;
     }>(`/hospital-finder/${hospitalId}/details`),
 
   getEmergencyQRCode: async (token: string) =>

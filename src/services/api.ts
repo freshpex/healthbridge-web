@@ -23,7 +23,7 @@ export const apiClient = {
       }
     });
     const payload = await response.json().catch(() => ({}));
-    if (!response.ok) throw new ApiError(payload.message ?? "Request failed", response.status);
+    if (!response.ok) throw new ApiError(payload.message ?? payload.error ?? "Request failed", response.status);
     return payload.data as T;
   }
 };

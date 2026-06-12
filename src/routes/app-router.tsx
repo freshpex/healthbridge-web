@@ -26,6 +26,7 @@ import { HospitalFinderPage } from "../app/patient/hospital-finder-page";
 import { AuthProvider } from "../app/auth/hooks/auth-provider";
 import { ProtectedRoute } from "./protected-route";
 import { LabDashboard } from "../app/laboratory/lab-dashboard";
+import { RoleWorkspacePage } from "../app/workspace/role-workspace-page";
 
 export function AppRouter() {
   return (
@@ -58,11 +59,37 @@ export function AppRouter() {
           <Route path="/patient/profile" element={<ProtectedRoute allowed={["patient"]}><PatientProfilePage /></ProtectedRoute>} />
           <Route path="/patient/symptom-checker" element={<ProtectedRoute allowed={["patient"]}><SymptomCheckerPage /></ProtectedRoute>} />
           <Route path="/patient/hospital-finder" element={<ProtectedRoute allowed={["patient"]}><HospitalFinderPage /></ProtectedRoute>} />
+          <Route path="/patient/notifications" element={<ProtectedRoute allowed={["patient"]}><RoleWorkspacePage mode="notifications" /></ProtectedRoute>} />
           <Route path="/doctor" element={<ProtectedRoute allowed={["doctor"]}><DoctorDashboard /></ProtectedRoute>} />
+          <Route path="/doctor/appointments" element={<ProtectedRoute allowed={["doctor"]}><RoleWorkspacePage mode="appointments" /></ProtectedRoute>} />
           <Route path="/hospital" element={<ProtectedRoute allowed={["hospital_admin"]}><HospitalDashboard /></ProtectedRoute>} />
+          <Route path="/hospital/appointments" element={<ProtectedRoute allowed={["hospital_admin"]}><RoleWorkspacePage mode="appointments" /></ProtectedRoute>} />
+          <Route path="/hospital/operations" element={<ProtectedRoute allowed={["hospital_admin"]}><RoleWorkspacePage mode="operations" /></ProtectedRoute>} />
           <Route path="/laboratory" element={<ProtectedRoute allowed={["laboratory"]}><LabDashboard /></ProtectedRoute>} />
+          <Route path="/laboratory/requests" element={<ProtectedRoute allowed={["laboratory", "hospital_admin", "super_admin"]}><RoleWorkspacePage mode="laboratory-requests" /></ProtectedRoute>} />
+          <Route path="/laboratory/results" element={<ProtectedRoute allowed={["laboratory", "hospital_admin", "super_admin"]}><RoleWorkspacePage mode="laboratory-results" /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute allowed={["super_admin"]}><AdminDashboard /></ProtectedRoute>} />
-          <Route path="/emergency" element={<ProtectedRoute allowed={["emergency_staff", "doctor"]}><EmergencyPage /></ProtectedRoute>} />
+          <Route path="/admin/operations" element={<ProtectedRoute allowed={["super_admin"]}><RoleWorkspacePage mode="operations" /></ProtectedRoute>} />
+          <Route path="/emergency" element={<ProtectedRoute allowed={["emergency_staff", "doctor", "hospital_admin", "super_admin"]}><EmergencyPage /></ProtectedRoute>} />
+          <Route path="/doctor/patients" element={<ProtectedRoute allowed={["doctor"]}><RoleWorkspacePage mode="patients" /></ProtectedRoute>} />
+          <Route path="/doctor/messages" element={<ProtectedRoute allowed={["doctor"]}><RoleWorkspacePage mode="messages" /></ProtectedRoute>} />
+          <Route path="/doctor/profile" element={<ProtectedRoute allowed={["doctor"]}><RoleWorkspacePage mode="profile" /></ProtectedRoute>} />
+          <Route path="/doctor/notifications" element={<ProtectedRoute allowed={["doctor"]}><RoleWorkspacePage mode="notifications" /></ProtectedRoute>} />
+          <Route path="/hospital/staff" element={<ProtectedRoute allowed={["hospital_admin"]}><RoleWorkspacePage mode="staff" /></ProtectedRoute>} />
+          <Route path="/hospital/patients" element={<ProtectedRoute allowed={["hospital_admin"]}><RoleWorkspacePage mode="patients" /></ProtectedRoute>} />
+          <Route path="/hospital/profile" element={<ProtectedRoute allowed={["hospital_admin"]}><RoleWorkspacePage mode="profile" /></ProtectedRoute>} />
+          <Route path="/hospital/notifications" element={<ProtectedRoute allowed={["hospital_admin"]}><RoleWorkspacePage mode="notifications" /></ProtectedRoute>} />
+          <Route path="/laboratory/patients" element={<ProtectedRoute allowed={["laboratory"]}><RoleWorkspacePage mode="patients" /></ProtectedRoute>} />
+          <Route path="/laboratory/profile" element={<ProtectedRoute allowed={["laboratory"]}><RoleWorkspacePage mode="profile" /></ProtectedRoute>} />
+          <Route path="/laboratory/notifications" element={<ProtectedRoute allowed={["laboratory"]}><RoleWorkspacePage mode="notifications" /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute allowed={["super_admin"]}><RoleWorkspacePage mode="users" /></ProtectedRoute>} />
+          <Route path="/admin/hospitals" element={<ProtectedRoute allowed={["super_admin"]}><RoleWorkspacePage mode="hospitals" /></ProtectedRoute>} />
+          <Route path="/admin/profile" element={<ProtectedRoute allowed={["super_admin"]}><RoleWorkspacePage mode="profile" /></ProtectedRoute>} />
+          <Route path="/admin/notifications" element={<ProtectedRoute allowed={["super_admin"]}><RoleWorkspacePage mode="notifications" /></ProtectedRoute>} />
+          <Route path="/emergency/requests" element={<ProtectedRoute allowed={["emergency_staff", "doctor"]}><RoleWorkspacePage mode="emergency-requests" /></ProtectedRoute>} />
+          <Route path="/emergency/cases" element={<ProtectedRoute allowed={["patient", "emergency_staff", "doctor", "hospital_admin", "super_admin"]}><EmergencyPage /></ProtectedRoute>} />
+          <Route path="/emergency/notifications" element={<ProtectedRoute allowed={["emergency_staff", "doctor"]}><RoleWorkspacePage mode="notifications" /></ProtectedRoute>} />
+          <Route path="/emergency/profile" element={<ProtectedRoute allowed={["emergency_staff", "doctor"]}><RoleWorkspacePage mode="profile" /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

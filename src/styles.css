@@ -956,3 +956,49 @@ td {
   align-items: center;
   gap: 0.75rem;
 }
+.skeleton-line {
+  height: 14px;
+  max-width: 420px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #eef3f8, #dfeaf3, #eef3f8);
+}
+.skeleton-line.wide { max-width: 640px; }
+.skeleton-line.short { max-width: 220px; }
+.empty-state {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  color: var(--muted);
+}
+.empty-state strong { color: var(--ink); }
+.form-stack {
+  display: grid;
+  gap: 0.85rem;
+}
+.form-stack label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+.form-stack input {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  font: inherit;
+}
+.inline-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.ghost-button.danger { color: #b42318; border-color: #fecaca; }
+.success-text { color: #047857; font-weight: 800; }
+.status-pill {
+  border-radius: 999px;
+  background: #eef7ff;
+  color: #0f5f8f;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
