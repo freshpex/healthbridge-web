@@ -1,4 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000/api/v1";
+const FALLBACK_API_URL = "https://healthbridge-backend-wroj.onrender.com/api/v1";
+const API_URL = import.meta.env.VITE_API_URL ?? FALLBACK_API_URL;
 
 export class ApiError extends Error {
   status: number;

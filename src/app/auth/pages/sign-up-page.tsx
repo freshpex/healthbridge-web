@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Building2, UserPlus, Home } from "lucide-react";
+import { Building2, UserPlus, Home, Eye, EyeOff } from "lucide-react";
 import { TopNav } from "../../../components/header/top-nav";
 import { healthbridgeService } from "../../../services/healthbridge-service";
 import type { Hospital } from "../../../types/domain";
@@ -15,6 +15,7 @@ export function SignUpPage() {
   const [name, setName] = useState("New Patient");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -73,7 +74,14 @@ export function SignUpPage() {
             <div className="form-grid">
               <label>Full name<input required value={name} onChange={(event) => setName(event.target.value)} /></label>
               <label>Email<input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-              <label>Password<input required minLength={8} type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>
+              <label>Password
+                <span className="password-field">
+                  <input required minLength={8} type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} />
+                  <button type="button" className="password-toggle" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "Hide password" : "Show password"}>
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </span>
+              </label>
             </div>
             <h2><Building2 size={22} /> Choose hospitals</h2>
             {loading ? <div className="loading-state">Loading registered hospitals...</div> : null}

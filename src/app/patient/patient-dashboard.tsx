@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Building2, CalendarDays, FileText, FlaskConical, History, Pill, Share2, UploadCloud } from "lucide-react";
 import { AppShell } from "../../components/layout/app-shell";
 import { DataTable } from "../../components/tables/data-table";
@@ -25,6 +26,7 @@ export function PatientDashboard() {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
+  const [emergencyQrUrl, setEmergencyQrUrl] = useState("");
 
   const load = async () => {
     if (!token) return;
@@ -37,6 +39,9 @@ export function PatientDashboard() {
       ]);
       setDashboard(nextDashboard);
       setHospitals(nextHospitals);
+      healthbridgeService.getEmergencyQRCode(token)
+        .then((result) => setEmergencyQrUrl(result.qrCodeUrl))
+        .catch(() => setEmergencyQrUrl(""));
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not load patient dashboard");
     } finally {
@@ -106,7 +111,7 @@ export function PatientDashboard() {
         <article className="panel profile-panel">
           <div className="panel-title-row">
             <h2>My profile summary</h2>
-            <a href="/patient/profile">View profile</a>
+            <Link to="/patient/profile">View profile</Link>
           </div>
           <div className="profile-hero">
             <div className="avatar-ring">{initials(dashboard.profile.fullName)}</div>
@@ -127,7 +132,7 @@ export function PatientDashboard() {
         <article className="panel connected-panel">
           <div className="panel-title-row">
             <h2>Connected hospitals</h2>
-            <a href="/patient/profile">View all</a>
+            <Link to="/patient/profile">View all</Link>
           </div>
           <div className="hospital-list">
             {connected.slice(0, 4).map((hospital) => (
@@ -146,7 +151,9 @@ export function PatientDashboard() {
             <strong>{dashboard.profile.emergencyCode ?? "Not enabled"}</strong>
             <small>Scanned 1 time · last 7 days ago</small>
           </div>
-          <div className="qr-card">{dashboard.profile.emergencyCode ? "QR" : "OFF"}</div>
+          <div className="qr-card">
+            {emergencyQrUrl ? <img src={emergencyQrUrl} alt="Emergency QR code" className="qr-image" /> : <span>{dashboard.profile.emergencyCode ? "QR" : "OFF"}</span>}
+          </div>
           <p>Emergency staff see only critical info first. Every access is logged for patient review.</p>
           <button className="secondary-button" type="button" onClick={enableEmergency}>Generate new code</button>
         </article>
@@ -155,7 +162,7 @@ export function PatientDashboard() {
         <article className="panel record-card-list" id="records">
           <div className="panel-title-row">
             <h2>Medical records</h2>
-            <a href="/patient/records">View all</a>
+            <Link to="/patient/records">View all</Link>
           </div>
           {recentRecords.length === 0 ? <div className="empty-state">No records have synced yet.</div> : recentRecords.map((record) => (
             <div className="record-row" key={record.id}>
@@ -168,7 +175,7 @@ export function PatientDashboard() {
         <article className="panel consent-preview">
           <div className="panel-title-row">
             <h2>Consent sharing</h2>
-            <a href="/patient/sharing">View all</a>
+            <Link to="/patient/sharing">View all</Link>
           </div>
           {activeShares.length === 0 ? <div className="empty-state">No active shares.</div> : activeShares.slice(0, 3).map((share) => (
             <div className="share-row" key={share.id}>
@@ -181,7 +188,7 @@ export function PatientDashboard() {
         <article className="panel audit-preview">
           <div className="panel-title-row">
             <h2>Audit history</h2>
-            <a href="/patient/audit">View all</a>
+            <Link to="/patient/audit">View all</Link>
           </div>
           <DataTable headers={["Who accessed", "What", "When"]} rows={dashboard.auditLogs.slice(0, 5).map((log) => [log.actor ?? log.role, log.action, formatDate(log.date)])} />
         </article>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadCloud } from "lucide-react";
 import { AppShell } from "../../components/layout/app-shell";
 import { DataTable } from "../../components/tables/data-table";
@@ -20,6 +20,7 @@ export function PatientProfilePage() {
   const [syncHospitalId, setSyncHospitalId] = useState<string>();
   const [file, setFile] = useState<File>();
   const [status, setStatus] = useState("");
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
 
   const saveProfile = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -77,6 +78,21 @@ export function PatientProfilePage() {
     }
   };
 
+  useEffect(() => {
+    let alive = true;
+    if (!token) return;
+    healthbridgeService.getEmergencyQRCode(token)
+      .then((result) => {
+        if (alive) setQrCodeUrl(result.qrCodeUrl);
+      })
+      .catch(() => {
+        if (alive) setQrCodeUrl("");
+      });
+    return () => {
+      alive = false;
+    };
+  }, [token]);
+
   return (
     <AppShell title="Profile and settings" subtitle="Maintain your medical profile, sync requests, uploads, and emergency access.">
       {loading ? <div className="loading-state">Loading profile...</div> : null}
@@ -104,6 +120,11 @@ export function PatientProfilePage() {
               <h2>Emergency and sync</h2>
               <p><strong>Emergency code:</strong> {dashboard.profile.emergencyCode ?? "Not enabled"}</p>
               <p><strong>Emergency contact:</strong> {formatContact(dashboard.profile.emergencyContact) || "Not set"}</p>
+              {qrCodeUrl ? (
+                <div className="qr-card" style={{ minHeight: "auto", margin: "16px 0" }}>
+                  <img src={qrCodeUrl} alt="Emergency QR code" className="qr-image" />
+                </div>
+              ) : null}
               <button className="secondary-button" type="button" onClick={enableEmergency}>Generate emergency code</button>
               <div className="form-stack inline-section">
                 <label>Request record sync<select value={syncHospitalId ?? dashboard.profile.connectedHospitalIds[0] ?? ""} onChange={(event) => setSyncHospitalId(event.target.value)}>{dashboard.profile.hospitalIds?.map((hospital) => <option key={hospital.id} value={hospital.id}>{hospital.name}</option>)}</select></label>
