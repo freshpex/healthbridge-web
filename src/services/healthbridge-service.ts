@@ -127,6 +127,12 @@ export const healthbridgeService = {
   getHospitalStaff: async (token: string, hospitalId: string) =>
     apiClient.request<User[]>(`/hospitals/${hospitalId}/staff`, {}, token),
 
+  createHospitalPersonnel: async (token: string, hospitalId: string, payload: { name: string; email: string; password: string; role: "doctor" | "hospital_admin"; phone?: string; specialty?: string; licenseNumber?: string; department?: string }) =>
+    apiClient.request<User>(`/hospitals/${hospitalId}/staff`, { method: "POST", body: JSON.stringify(payload) }, token),
+
+  updateHospitalPersonnel: async (token: string, hospitalId: string, staffId: string, payload: { name?: string; phone?: string; isActive?: boolean; specialty?: string; department?: string; acceptingAppointments?: boolean }) =>
+    apiClient.request<User>(`/hospitals/${hospitalId}/staff/${staffId}`, { method: "PATCH", body: JSON.stringify(payload) }, token),
+
   getHospitals: async (token: string) => apiClient.request<RawHospital[]>("/hospitals", {}, token).then((hospitals) => hospitals.map(normalizeHospital)),
 
   listLaboratories: async (token: string, status?: "active" | "inactive") =>
@@ -172,8 +178,18 @@ export const healthbridgeService = {
   getRecords: async (token: string, patientId?: string) =>
     apiClient.request<RawRecord[]>(`/medical-records${patientId ? `?patientId=${patientId}` : ""}`, {}, token).then((records) => records.map(normalizeRecord)),
 
-  getLabResults: async (token: string, patientId?: string) =>
-    apiClient.request<LabResult[]>(`/lab-results${patientId ? `?patientId=${patientId}` : ""}`, {}, token),
+  getLabResults: async (token: string, patientId?: string, filters?: { status?: LabResult["status"]; search?: string; hospitalId?: string; laboratoryId?: string; dateFrom?: string; dateTo?: string }) => {
+    const query = new URLSearchParams();
+    if (patientId) query.set("patientId", patientId);
+    if (filters?.status) query.set("status", filters.status);
+    if (filters?.search) query.set("search", filters.search);
+    if (filters?.hospitalId) query.set("hospitalId", filters.hospitalId);
+    if (filters?.laboratoryId) query.set("laboratoryId", filters.laboratoryId);
+    if (filters?.dateFrom) query.set("dateFrom", filters.dateFrom);
+    if (filters?.dateTo) query.set("dateTo", filters.dateTo);
+    const suffix = query.toString();
+    return apiClient.request<LabResult[]>(`/lab-results${suffix ? `?${suffix}` : ""}`, {}, token);
+  },
 
   getLabRequests: async (token: string, patientId?: string) =>
     apiClient.request<LabRequest[]>(`/lab-results/requests${patientId ? `?patientId=${patientId}` : ""}`, {}, token),

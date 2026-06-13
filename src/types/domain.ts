@@ -38,6 +38,7 @@ export interface User {
   patientId?: string;
   phone?: string;
   avatarUrl?: string;
+  isActive?: boolean;
   notificationPreferences?: NotificationPreferences;
   emergencyProfile?: EmergencyProfile;
   doctorProfile?: DoctorRoleProfile;
